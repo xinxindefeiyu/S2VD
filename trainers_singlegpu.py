@@ -3,7 +3,7 @@
 # Power by Zongsheng Yue 2020-08-29 16:25:28
 
 import os
-import sys
+import logging
 import cv2
 import shutil
 import random
@@ -24,6 +24,35 @@ import torchvision.utils as vutils
 from torch.utils.tensorboard import SummaryWriter
 
 torch.set_default_dtype(torch.float32)
+
+
+def logger_config(log_path, logging_name):
+    '''
+    配置log
+    :param log_path: 输出log路径
+    :param logging_name: 记录中name，可随意
+    '''
+    '''
+    logger是日志对象，handler是流处理器，console是控制台输出（没有console也可以，将不会在控制台输出，会在日志文件中输出）
+    '''
+    # 获取logger对象,取名
+    logger = logging.getLogger(logging_name)
+    # 输出DEBUG及以上级别的信息，针对所有输出的第一层过滤
+    logger.setLevel(level=logging.DEBUG)
+    # 获取文件日志句柄并设置日志级别，第二层过滤
+    handler = logging.FileHandler(log_path, encoding='UTF-8')
+    handler.setLevel(logging.INFO)
+    # 生成并设置文件日志格式
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    # console相当于控制台输出，handler文件输出。获取流句柄并设置日志级别，第二层过滤
+    console = logging.StreamHandler()
+    console.setLevel(logging.DEBUG)
+    # 为logger对象添加句柄
+    logger.addHandler(handler)
+    logger.addHandler(console)
+    return logger
+
 
 class trainer:
     def __init__(self, args):
@@ -84,6 +113,7 @@ class trainer:
         self.truncate_test = args['truncate_test']
         self.langevin_steps = args['langevin_steps']
         self.print_freq  = args['print_freq']
+        self.logger = logger_config(log_path='log.txt', logging_name='据说名字长一点容易被人记住')
 
     def set_seed(self):
         print('*'*150)
