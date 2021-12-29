@@ -431,6 +431,7 @@ class trainer:
                     Y, Y_gt, Z, S, M = self.load_data_video(current_path, semi=False)
                 else:
                     Y, Z, S, M = self.load_data_video(current_path, semi=True)
+                    #     Y:rainy num_batch x c x num_frame x p x p   Z:latent  S:state  M:motion num_batch x state_size
                 assert self.patch_size == Y.shape[-1]
                 num_batch, _, num_frame = Y.shape[:3]
                 lossM_batch = likelihood_batch = mse_batch = tv_batch = 0
